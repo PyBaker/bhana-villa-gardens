@@ -9,11 +9,11 @@
     },
     {
       keys: ['phone', 'number', 'call', 'telephone', 'ring', 'contact number', 'cell', 'mobile'],
-      answer: '📞 Call us on <a href="tel:+263779222111"><strong>+263 779 222 111</strong></a> — Mon to Sat, 8am–5pm.'
+      answer: '📞 Call us on <a href="tel:+263715112962"><strong>+263 71 511 2962</strong></a> — Mon to Sat, 8am–5pm.'
     },
     {
       keys: ['whatsapp', 'whats app', 'wa', 'chat', 'text', 'message', 'ping'],
-      answer: '💬 WhatsApp us on <strong>+263 785 333 222</strong>. <a href="https://wa.me/263785333222?text=Hi%2C%20I%27d%20like%20to%20enquire%20about%20Villa%20Gardens" target="_blank" rel="noopener">Open WhatsApp →</a>'
+      answer: '💬 WhatsApp us on <strong>+263 71 511 2962</strong>. <a href="https://wa.me/263715112962?text=Hi%2C%20I%27d%20like%20to%20enquire%20about%20Villa%20Gardens" target="_blank" rel="noopener">Open WhatsApp →</a>'
     },
     {
       keys: ['email', 'mail', 'inbox', 'email address'],
@@ -49,7 +49,7 @@
     },
     {
       keys: ['hours', 'open', 'opening', 'time', 'when', 'operating'],
-      answer: '🕐 Our team is available <strong>Mon–Sat, 8am–5pm</strong>. For urgent queries, WhatsApp <a href="https://wa.me/263785333222" target="_blank" rel="noopener">+263 785 333 222</a>.'
+      answer: '🕐 Our team is available <strong>Mon–Sat, 8am–5pm</strong>. For urgent queries, WhatsApp <a href="https://wa.me/263715112962" target="_blank" rel="noopener">+263 71 511 2962</a>.'
     },
     {
       keys: ['catering', 'food', 'menu', 'drinks', 'bar', 'kitchen', 'eat'],
@@ -73,7 +73,7 @@
     }
   ];
 
-  var FALLBACK = 'I\'m not sure about that. 😊 Please contact us directly — call <a href="tel:+263779222111">+263 779 222 111</a>, <a href="mailto:events@villagardens.co.zw">email us</a>, or <a href="https://wa.me/263785333222" target="_blank" rel="noopener">WhatsApp us</a>.';
+  var FALLBACK = 'I\'m not sure about that. 😊 Please contact us directly — call <a href="tel:+263715112962">+263 71 511 2962</a>, <a href="mailto:events@villagardens.co.zw">email us</a>, or <a href="https://wa.me/263715112962" target="_blank" rel="noopener">WhatsApp us</a>.';
 
   // ---- FUZZY MATCH ----
   // Levenshtein distance for typo tolerance
@@ -288,22 +288,22 @@
     if (booking.step === 'confirm') {
       if (lower.indexOf('call us') !== -1 || lower.indexOf('call') !== -1 && lower.indexOf('instead') !== -1) {
         booking = null;
-        return '📞 No problem! Give us a call on <a href="tel:+263779222111"><strong>+263 779 222 111</strong></a> or <a href="https://wa.me/263785333222" target="_blank" rel="noopener">WhatsApp us</a> and we\'ll sort everything out. 😊';
+        return '📞 No problem! Give us a call on <a href="tel:+263715112962"><strong>+263 71 511 2962</strong></a> or <a href="https://wa.me/263715112962" target="_blank" rel="noopener">WhatsApp us</a> and we\'ll sort everything out. 😊';
       }
       if (lower.indexOf('yes') !== -1 || lower.indexOf('confirm') !== -1 || lower.indexOf('sure') !== -1 || lower.indexOf('ok') !== -1) {
         var b = booking;
         booking = null;
         return '🎉 Wonderful, <strong>' + b.name + '</strong>! Your <strong>' + b.eventType + '</strong> on <strong>' + (b.dateStr || b.day) + ' at ' + b.time + '</strong> for <strong>' + b.guests + ' guests</strong> has been noted.<br><br>' +
           'Our events team will call you on <strong>' + b.phone + '</strong> to confirm all the details. You can also reach us at:<br><br>' +
-          '📞 <a href="tel:+263779222111">+263 779 222 111</a><br>' +
-          '💬 <a href="https://wa.me/263785333222" target="_blank" rel="noopener">WhatsApp us</a><br>' +
+          '📞 <a href="tel:+263715112962">+263 71 511 2962</a><br>' +
+          '💬 <a href="https://wa.me/263715112962" target="_blank" rel="noopener">WhatsApp us</a><br>' +
           '📧 <a href="mailto:events@villagardens.co.zw">events@villagardens.co.zw</a>';
       }
       if (lower.indexOf('no') !== -1 || lower.indexOf('change') !== -1 || lower.indexOf('cancel') !== -1) {
         booking = null;
         return 'No problem! Let me know if you\'d like to start over or ask something else. 😊';
       }
-      return 'Please reply <strong>Yes</strong> to confirm or <strong>No</strong> to cancel. Or <a href="tel:+263779222111">📞 call us</a> for assistance.';
+      return 'Please reply <strong>Yes</strong> to confirm or <strong>No</strong> to cancel. Or <a href="tel:+263715112962">📞 call us</a> for assistance.';
     }
 
     return null;
@@ -326,7 +326,7 @@
   var SYSTEM_CONTEXT = [
     'You are a helpful assistant for Villa Gardens, an events venue in Ruwa, Zimbabwe.',
     'Address: Stand 1234 Villa Gardens, Ruwa, off Harare-Mutare Highway.',
-    'Phone: +263 779 222 111. WhatsApp: +263 785 333 222. Email: events@villagardens.co.zw.',
+    'Phone: +263 71 511 2962. WhatsApp: +263 71 511 2962. Email: events@villagardens.co.zw.',
     'Venues: Garden Pavilion, Grand Hall (300 guests), Lapa, Boardroom.',
     'Hours: Mon-Sat 8am-5pm. Rates vary by event — up to 50% off Jan/Feb 2026.',
     'Answer concisely and helpfully.'
