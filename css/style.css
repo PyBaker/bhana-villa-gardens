@@ -1089,7 +1089,27 @@ h1, h2, h3, h4 {
   font-size: 24px;
   transition: transform 0.2s, box-shadow 0.2s;
 }
-
+.whatsapp-float::before {
+  content: 'Chat on WhatsApp';
+  position: absolute;
+  right: 62px;
+  background: #25D366;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+  padding: 6px 12px;
+  border-radius: 20px;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateX(6px);
+  transition: opacity 0.2s, transform 0.2s;
+  font-family: var(--font-body);
+}
+.whatsapp-float:hover::before {
+  opacity: 1;
+  transform: translateX(0);
+}
 .whatsapp-float:hover {
   transform: scale(1.1);
   box-shadow: 0 6px 28px rgba(37,211,102,0.55);
@@ -1704,6 +1724,27 @@ h1, h2, h3, h4 {
   color: var(--white);
   box-shadow: 0 4px 16px rgba(0,0,0,0.25);
   transition: transform 0.2s, background 0.2s;
+}
+.vg-chat__toggle::before {
+  content: 'Chat with VillaBot';
+  position: absolute;
+  right: 66px;
+  background: var(--charcoal);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+  padding: 6px 12px;
+  border-radius: 20px;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateX(6px);
+  transition: opacity 0.2s, transform 0.2s;
+  font-family: var(--font-body);
+}
+.vg-chat__toggle:hover::before {
+  opacity: 1;
+  transform: translateX(0);
 }
 .vg-chat__toggle:hover { transform: scale(1.08); background: #c8860a; }
 
