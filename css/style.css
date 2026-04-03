@@ -1726,7 +1726,7 @@ h1, h2, h3, h4 {
   transition: transform 0.2s, background 0.2s;
 }
 .vg-chat__toggle::before {
-  content: 'Chat with VillaBot';
+  content: 'Chat with Vicky';
   position: absolute;
   right: 66px;
   background: var(--charcoal);
