@@ -1785,7 +1785,7 @@ h1, h2, h3, h4 {
   max-width: 85%;
   padding: 10px 14px;
   border-radius: 14px;
-  font-size: 13.5px;
+  font-size: 15px;
   line-height: 1.55;
 }
 .vg-chat__msg--bot {
@@ -1832,8 +1832,8 @@ h1, h2, h3, h4 {
   border: 1.5px solid var(--amber);
   color: var(--charcoal);
   border-radius: 20px;
-  padding: 6px 12px;
-  font-size: 12px;
+  padding: 7px 14px;
+  font-size: 13.5px;
   cursor: pointer;
   transition: background 0.2s, color 0.2s;
   font-family: inherit;
@@ -1854,8 +1854,8 @@ h1, h2, h3, h4 {
   flex: 1;
   border: 1.5px solid #e0ddd5;
   border-radius: 24px;
-  padding: 8px 14px;
-  font-size: 13px;
+  padding: 9px 16px;
+  font-size: 15px;
   font-family: inherit;
   outline: none;
   transition: border-color 0.2s;
@@ -1887,7 +1887,7 @@ h1, h2, h3, h4 {
   gap: 8px;
   background: #25d366;
   color: #fff;
-  font-size: 13px;
+  font-size: 15px;
   font-weight: 600;
   font-family: inherit;
   padding: 10px 16px;

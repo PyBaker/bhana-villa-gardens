@@ -229,14 +229,21 @@
     var send        = document.getElementById('vgChatSend');
     var badge       = document.querySelector('.vg-chat__badge');
     var suggestions = document.getElementById('vgSuggestions');
+    var waFloat     = document.querySelector('.whatsapp-float');
+
+    function setChatOpen(open) {
+      chat.classList.toggle('vg-chat--open', open);
+      if (waFloat) waFloat.style.display = open ? 'none' : '';
+    }
 
     toggle.addEventListener('click', function () {
-      chat.classList.toggle('vg-chat--open');
+      var isOpen = chat.classList.contains('vg-chat--open');
+      setChatOpen(!isOpen);
       if (badge) badge.style.display = 'none';
     });
 
     close.addEventListener('click', function () {
-      chat.classList.remove('vg-chat--open');
+      setChatOpen(false);
     });
 
     send.addEventListener('click', function () {
