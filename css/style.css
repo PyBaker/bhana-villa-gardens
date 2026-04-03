@@ -1078,7 +1078,7 @@ h1, h2, h3, h4 {
 .whatsapp-float {
   position: fixed;
   bottom: 28px;
-  right: 28px;
+  right: 24px;
   z-index: 999;
   width: 52px; height: 52px;
   background: #25D366;
@@ -1917,8 +1917,9 @@ h1, h2, h3, h4 {
 .vg-chat__send:hover { background: #c8860a; }
 
 @media (max-width: 400px) {
-  .vg-chat { width: calc(100vw - 24px); right: 12px; bottom: 140px; }
-  .vg-chat__toggle { right: 12px; }
+  .vg-chat { width: calc(100vw - 32px); right: 16px; bottom: 140px; }
+  .vg-chat__toggle { right: 16px; bottom: 90px; }
+  .whatsapp-float { right: 16px; bottom: 28px; }
 }
 
 .vg-chat__wa-btn {
