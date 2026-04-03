@@ -128,6 +128,180 @@
     return bestScore >= 2 ? bestAnswer : null;
   }
 
+  // ---- BOOKING FLOW ----
+  // Demo timeslots — replace with Google Calendar API later
+  var DEMO_SLOTS = {
+    monday:    ['10:00am', '2:00pm'],
+    tuesday:   ['9:00am', '11:00am', '3:00pm'],
+    wednesday: ['10:00am', '1:00pm'],
+    thursday:  ['9:00am', '2:00pm', '4:00pm'],
+    friday:    ['10:00am', '12:00pm', '3:00pm'],
+    saturday:  ['9:00am', '11:00am', '2:00pm']
+  };
+
+  var EVENT_TYPES = {
+    wedding:    'Wedding',
+    conference: 'Conference',
+    function:   'Private Function',
+    'year end': 'Year-End Function',
+    birthday:   'Birthday',
+    meeting:    'Meeting',
+    tour:       'Venue Tour',
+    visit:      'Venue Tour'
+  };
+
+  // booking state: null = not in flow
+  var booking = null;
+
+  function startBooking() {
+    booking = { step: 'event_type' };
+    return '📅 I\'d love to help you book! What type of event are you planning?<br><br>' +
+      '<em>e.g. wedding, conference, private function, birthday, venue tour…</em>';
+  }
+
+  function getNextWeekDates() {
+    var today = new Date();
+    var days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+    var dates = [];
+    // find next Monday
+    var diff = (8 - today.getDay()) % 7 || 7;
+    for (var i = 0; i < 6; i++) {
+      var d = new Date(today);
+      d.setDate(today.getDate() + diff + i);
+      dates.push({ day: days[d.getDay()], date: d.getDate() + ' ' + d.toLocaleString('default',{month:'long'}) });
+    }
+    return dates;
+  }
+
+  function parseDayFromInput(input) {
+    var days = ['monday','tuesday','wednesday','thursday','friday','saturday'];
+    for (var i = 0; i < days.length; i++) {
+      if (fuzzyMatch(input.toLowerCase().replace(/[^a-z]/g,''), days[i]) ||
+          input.toLowerCase().indexOf(days[i]) !== -1) return days[i];
+    }
+    return null;
+  }
+
+  function slotsMsg(day, slots) {
+    return '🗓️ Available slots on <strong>' + cap(day) + '</strong>:<br><br>' +
+      slots.map(function(s){ return '• ' + s; }).join('<br>') +
+      '<br><br>Which time works for you? Or <a href="tel:+263779222111">📞 call us</a> for more options.';
+  }
+
+  function cap(s) { return s.charAt(0).toUpperCase() + s.slice(1); }
+
+  function handleBookingStep(input) {
+    var lower = input.toLowerCase();
+
+    // -- step: event type --
+    if (booking.step === 'event_type') {
+      var matched = null;
+      for (var k in EVENT_TYPES) {
+        if (lower.indexOf(k) !== -1 || fuzzyMatch(lower.replace(/[^a-z]/g,''), k.replace(/[^a-z]/g,''))) {
+          matched = EVENT_TYPES[k]; break;
+        }
+      }
+      booking.eventType = matched || cap(input.trim());
+      booking.step = 'date';
+      return 'Great choice — <strong>' + booking.eventType + '</strong>! 🎉<br><br>' +
+        'When are you thinking? You can say something like <em>"next week"</em>, a specific day, or a date.';
+    }
+
+    // -- step: date --
+    if (booking.step === 'date') {
+      // "next week" — show all next week days
+      if (lower.indexOf('next week') !== -1 || lower.indexOf('nxt week') !== -1 || lower.indexOf('nexweek') !== -1) {
+        var nextWeek = getNextWeekDates();
+        booking.step = 'day';
+        booking.nextWeekDates = nextWeek;
+        var list = nextWeek.map(function(d){ return '• <strong>' + d.day + '</strong>, ' + d.date; }).join('<br>');
+        return '📆 Here are the available days next week:<br><br>' + list +
+          '<br><br>Which day works best for you?';
+      }
+      // specific day mentioned
+      var day = parseDayFromInput(input);
+      if (day && DEMO_SLOTS[day]) {
+        booking.step = 'time';
+        booking.day = cap(day);
+        return slotsMsg(day, DEMO_SLOTS[day]);
+      }
+      // unrecognised
+      return 'Could you clarify the date? Try something like <em>"next Tuesday"</em> or <em>"next week"</em>. Or <a href="tel:+263779222111">📞 call us</a> and we\'ll sort it out!';
+    }
+
+    // -- step: day (after "next week") --
+    if (booking.step === 'day') {
+      var d = parseDayFromInput(input);
+      if (d && DEMO_SLOTS[d]) {
+        booking.step = 'time';
+        booking.day = cap(d);
+        // match date string from nextWeekDates
+        if (booking.nextWeekDates) {
+          for (var i = 0; i < booking.nextWeekDates.length; i++) {
+            if (booking.nextWeekDates[i].day.toLowerCase() === d) {
+              booking.dateStr = booking.nextWeekDates[i].date; break;
+            }
+          }
+        }
+        return slotsMsg(d, DEMO_SLOTS[d]);
+      }
+      return 'I didn\'t quite catch that day — could you try again? e.g. <em>"Monday"</em> or <em>"Friday"</em>.';
+    }
+
+    // -- step: time --
+    if (booking.step === 'time') {
+      // accept any time-like input
+      var timeMatch = input.match(/\d{1,2}(?::\d{2})?\s*(?:am|pm)?/i);
+      booking.time = timeMatch ? timeMatch[0] : input.trim();
+      booking.step = 'guests';
+      return 'Perfect — <strong>' + booking.time + '</strong> it is! 👍<br><br>How many guests are you expecting?';
+    }
+
+    // -- step: guests --
+    if (booking.step === 'guests') {
+      var numMatch = input.match(/\d+/);
+      booking.guests = numMatch ? numMatch[0] : input.trim();
+      booking.step = 'confirm';
+      var dateDisplay = (booking.dateStr ? booking.dateStr + ' (' + booking.day + ')' : booking.day) || 'TBC';
+      return '✅ Here\'s your booking summary:<br><br>' +
+        '• <strong>Event:</strong> ' + booking.eventType + '<br>' +
+        '• <strong>Date:</strong> ' + dateDisplay + '<br>' +
+        '• <strong>Time:</strong> ' + booking.time + '<br>' +
+        '• <strong>Guests:</strong> ' + booking.guests + '<br><br>' +
+        'Shall I reserve this slot? Reply <strong>Yes</strong> to confirm, or <strong>No</strong> to change something.<br><br>' +
+        'Or if you\'d prefer to speak to someone — <a href="tel:+263779222111">📞 call us on +263 779 222 111</a>.';
+    }
+
+    // -- step: confirm --
+    if (booking.step === 'confirm') {
+      if (lower.indexOf('yes') !== -1 || lower.indexOf('confirm') !== -1 || lower.indexOf('sure') !== -1 || lower.indexOf('ok') !== -1) {
+        var b = booking;
+        booking = null;
+        return '🎉 Wonderful! Your <strong>' + b.eventType + '</strong> on <strong>' + (b.dateStr || b.day) + ' at ' + b.time + '</strong> has been noted.<br><br>' +
+          'Our events team will contact you shortly to confirm all the details. You can also reach us at:<br><br>' +
+          '📞 <a href="tel:+263779222111">+263 779 222 111</a><br>' +
+          '💬 <a href="https://wa.me/263785333222" target="_blank" rel="noopener">WhatsApp us</a><br>' +
+          '📧 <a href="mailto:events@villagardens.co.zw">events@villagardens.co.zw</a>';
+      }
+      if (lower.indexOf('no') !== -1 || lower.indexOf('change') !== -1 || lower.indexOf('cancel') !== -1) {
+        booking = null;
+        return 'No problem! Let me know if you\'d like to start over or ask something else. 😊';
+      }
+      return 'Please reply <strong>Yes</strong> to confirm or <strong>No</strong> to cancel. Or <a href="tel:+263779222111">📞 call us</a> for assistance.';
+    }
+
+    return null;
+  }
+
+  function isBookingIntent(input) {
+    var triggers = ['book', 'booking', 'reserve', 'reservation', 'appointment', 'schedule', 'next week', 'want to come', 'plan', 'planning', 'arrange'];
+    var lower = input.toLowerCase();
+    for (var i = 0; i < triggers.length; i++) {
+      if (lower.indexOf(triggers[i]) !== -1) return true;
+    }
+    return false;
+  }
+
   // ---- HF INFERENCE API ----
   // Uses a small open-source conversational model as enhancement
   var HF_MODEL = 'facebook/blenderbot-400M-distill';
@@ -204,21 +378,36 @@
     addMessage(text, 'user');
     showTyping();
 
-    // Try local fuzzy match first (instant)
-    var local = getLocalResponse(text);
-    if (local) {
-      setTimeout(function () {
-        removeTyping();
-        addMessage(local, 'bot');
-      }, 500);
-      return;
-    }
-
-    // Fall back to Hugging Face
-    askHuggingFace(text, function (hfReply) {
+    setTimeout(function () {
       removeTyping();
-      addMessage(hfReply || FALLBACK, 'bot');
-    });
+
+      // Active booking flow — continue it
+      if (booking) {
+        var reply = handleBookingStep(text);
+        addMessage(reply || FALLBACK, 'bot');
+        return;
+      }
+
+      // Booking intent detected — start flow
+      if (isBookingIntent(text)) {
+        addMessage(startBooking(), 'bot');
+        return;
+      }
+
+      // KB fuzzy match
+      var local = getLocalResponse(text);
+      if (local) {
+        addMessage(local, 'bot');
+        return;
+      }
+
+      // Hugging Face fallback
+      showTyping();
+      askHuggingFace(text, function (hfReply) {
+        removeTyping();
+        addMessage(hfReply || FALLBACK, 'bot');
+      });
+    }, 600);
   }
 
   document.addEventListener('DOMContentLoaded', function () {
