@@ -1937,3 +1937,60 @@ h1, h2, h3, h4 {
 }
 .vg-chat__wa-btn:hover { background: #1ebe5d; color: #fff; }
 .vg-chat__wa-btn i { font-size: 16px; }
+
+/* ---- QUICK REPLIES ---- */
+.vg-chat__quick-replies {
+  display: flex; flex-wrap: wrap; gap: 8px;
+  padding: 4px 0 8px;
+}
+.vg-chat__quick-btn {
+  background: #fff;
+  border: 1.5px solid var(--amber);
+  color: var(--charcoal);
+  border-radius: 20px;
+  padding: 7px 14px;
+  font-size: 14px;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background 0.2s, color 0.2s;
+  white-space: nowrap;
+}
+.vg-chat__quick-btn:hover { background: var(--amber); color: #fff; }
+
+/* ---- DATE PICKER ---- */
+.vg-chat__datepicker {
+  background: #fff;
+  border-radius: 12px;
+  padding: 12px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.1);
+  width: 100%;
+  margin-bottom: 8px;
+}
+.vg-dp__header {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 10px;
+}
+.vg-dp__header span { font-weight: 700; font-size: 14px; color: var(--charcoal); }
+.vg-dp__header button {
+  background: none; border: none; cursor: pointer;
+  font-size: 18px; color: var(--amber); padding: 0 6px; line-height: 1;
+}
+.vg-dp__header button:hover { color: var(--charcoal); }
+.vg-dp__labels {
+  display: grid; grid-template-columns: repeat(7, 1fr);
+  text-align: center; margin-bottom: 4px;
+}
+.vg-dp__labels span { font-size: 11px; font-weight: 700; color: #aaa; padding: 2px 0; }
+.vg-dp__grid {
+  display: grid; grid-template-columns: repeat(7, 1fr); gap: 3px;
+}
+.vg-dp__day {
+  background: none; border: none; border-radius: 50%;
+  width: 32px; height: 32px;
+  font-size: 13px; cursor: pointer; font-family: inherit;
+  transition: background 0.15s, color 0.15s;
+  color: var(--charcoal);
+}
+.vg-dp__day:hover:not(:disabled) { background: var(--amber); color: #fff; }
+.vg-dp__day--disabled { color: #ccc; cursor: default; }
+.vg-dp__empty { width: 32px; height: 32px; }

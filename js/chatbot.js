@@ -155,8 +155,10 @@
 
   function startBooking() {
     booking = { step: 'event_type' };
-    return '📅 I\'d love to help you book! What type of event are you planning?<br><br>' +
-      '<em>e.g. wedding, conference, private function, birthday, venue tour…</em>';
+    setTimeout(function () {
+      addQuickReplies(['💍 Wedding', '💼 Conference', '🎊 Private Function', '🎂 Birthday', '🏛️ Venue Tour']);
+    }, 650);
+    return '📅 I\'d love to help you book! What type of event are you planning?';
   }
 
   function getNextWeekDates() {
@@ -183,9 +185,10 @@
   }
 
   function slotsMsg(day, slots) {
-    return '🗓️ Available slots on <strong>' + cap(day) + '</strong>:<br><br>' +
-      slots.map(function(s){ return '• ' + s; }).join('<br>') +
-      '<br><br>Which time works for you? Or <a href="tel:+263779222111">📞 call us</a> for more options.';
+    setTimeout(function () {
+      addQuickReplies(slots);
+    }, 650);
+    return '🗓️ Available slots on <strong>' + cap(day) + '</strong> — tap a time or type your own:';
   }
 
   function cap(s) { return s.charAt(0).toUpperCase() + s.slice(1); }
@@ -203,49 +206,20 @@
       }
       booking.eventType = matched || cap(input.trim());
       booking.step = 'date';
-      return 'Great choice — <strong>' + booking.eventType + '</strong>! 🎉<br><br>' +
-        'When are you thinking? You can say something like <em>"next week"</em>, a specific day, or a date.';
+      setTimeout(function () { addDatePicker(); }, 650);
+      return 'Great choice — <strong>' + booking.eventType + '</strong>! 🎉<br><br>Pick a date:';
     }
 
-    // -- step: date --
+    // -- step: date (from calendar picker) --
     if (booking.step === 'date') {
-      // "next week" — show all next week days
-      if (lower.indexOf('next week') !== -1 || lower.indexOf('nxt week') !== -1 || lower.indexOf('nexweek') !== -1) {
-        var nextWeek = getNextWeekDates();
-        booking.step = 'day';
-        booking.nextWeekDates = nextWeek;
-        var list = nextWeek.map(function(d){ return '• <strong>' + d.day + '</strong>, ' + d.date; }).join('<br>');
-        return '📆 Here are the available days next week:<br><br>' + list +
-          '<br><br>Which day works best for you?';
-      }
-      // specific day mentioned
-      var day = parseDayFromInput(input);
-      if (day && DEMO_SLOTS[day]) {
-        booking.step = 'time';
-        booking.day = cap(day);
-        return slotsMsg(day, DEMO_SLOTS[day]);
-      }
-      // unrecognised
-      return 'Could you clarify the date? Try something like <em>"next Tuesday"</em> or <em>"next week"</em>. Or <a href="tel:+263779222111">📞 call us</a> and we\'ll sort it out!';
-    }
-
-    // -- step: day (after "next week") --
-    if (booking.step === 'day') {
-      var d = parseDayFromInput(input);
-      if (d && DEMO_SLOTS[d]) {
-        booking.step = 'time';
-        booking.day = cap(d);
-        // match date string from nextWeekDates
-        if (booking.nextWeekDates) {
-          for (var i = 0; i < booking.nextWeekDates.length; i++) {
-            if (booking.nextWeekDates[i].day.toLowerCase() === d) {
-              booking.dateStr = booking.nextWeekDates[i].date; break;
-            }
-          }
-        }
-        return slotsMsg(d, DEMO_SLOTS[d]);
-      }
-      return 'I didn\'t quite catch that day — could you try again? e.g. <em>"Monday"</em> or <em>"Friday"</em>.';
+      // Calendar sends "Monday 7 April" format
+      var dayMatch = parseDayFromInput(input);
+      booking.dateStr = input.trim();
+      booking.day = dayMatch ? cap(dayMatch) : input.trim();
+      booking.step = 'time';
+      var slotKey = dayMatch || 'monday';
+      var slots = DEMO_SLOTS[slotKey] || DEMO_SLOTS['monday'];
+      return slotsMsg(slotKey, slots);
     }
 
     // -- step: time --
@@ -268,12 +242,19 @@
         '• <strong>Date:</strong> ' + dateDisplay + '<br>' +
         '• <strong>Time:</strong> ' + booking.time + '<br>' +
         '• <strong>Guests:</strong> ' + booking.guests + '<br><br>' +
-        'Shall I reserve this slot? Reply <strong>Yes</strong> to confirm, or <strong>No</strong> to change something.<br><br>' +
-        'Or if you\'d prefer to speak to someone — <a href="tel:+263779222111">📞 call us on +263 779 222 111</a>.';
+        'Shall I reserve this slot?';
+      setTimeout(function () {
+        addQuickReplies(['✅ Yes, confirm', '❌ No, cancel', '📞 Call us instead']);
+      }, 650);
+      return ret;
     }
 
     // -- step: confirm --
     if (booking.step === 'confirm') {
+      if (lower.indexOf('call us') !== -1 || lower.indexOf('call') !== -1 && lower.indexOf('instead') !== -1) {
+        booking = null;
+        return '📞 No problem! Give us a call on <a href="tel:+263779222111"><strong>+263 779 222 111</strong></a> or <a href="https://wa.me/263785333222" target="_blank" rel="noopener">WhatsApp us</a> and we\'ll sort everything out. 😊';
+      }
       if (lower.indexOf('yes') !== -1 || lower.indexOf('confirm') !== -1 || lower.indexOf('sure') !== -1 || lower.indexOf('ok') !== -1) {
         var b = booking;
         booking = null;
@@ -355,6 +336,103 @@
     msg.className = 'vg-chat__msg vg-chat__msg--' + type;
     msg.innerHTML = text;
     body.appendChild(msg);
+    body.scrollTop = body.scrollHeight;
+  }
+
+  function addQuickReplies(options) {
+    var body = document.getElementById('vgChatBody');
+    var wrap = document.createElement('div');
+    wrap.className = 'vg-chat__quick-replies';
+    options.forEach(function (opt) {
+      var btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'vg-chat__quick-btn';
+      btn.textContent = opt;
+      btn.addEventListener('click', function () {
+        wrap.remove();
+        handleInput(opt);
+      });
+      wrap.appendChild(btn);
+    });
+    body.appendChild(wrap);
+    body.scrollTop = body.scrollHeight;
+  }
+
+  function addDatePicker() {
+    var body = document.getElementById('vgChatBody');
+    var today = new Date();
+    var current = new Date(today.getFullYear(), today.getMonth(), 1);
+    var DAYS = ['Su','Mo','Tu','We','Th','Fr','Sa'];
+    var MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+
+    var wrap = document.createElement('div');
+    wrap.className = 'vg-chat__datepicker';
+
+    function render() {
+      wrap.innerHTML = '';
+      var year = current.getFullYear();
+      var month = current.getMonth();
+
+      // Header
+      var header = document.createElement('div');
+      header.className = 'vg-dp__header';
+      var prev = document.createElement('button');
+      prev.type = 'button'; prev.textContent = '‹';
+      prev.addEventListener('click', function () {
+        current = new Date(year, month - 1, 1); render();
+      });
+      var next = document.createElement('button');
+      next.type = 'button'; next.textContent = '›';
+      next.addEventListener('click', function () {
+        current = new Date(year, month + 1, 1); render();
+      });
+      var title = document.createElement('span');
+      title.textContent = MONTHS[month] + ' ' + year;
+      header.appendChild(prev); header.appendChild(title); header.appendChild(next);
+      wrap.appendChild(header);
+
+      // Day labels
+      var labels = document.createElement('div');
+      labels.className = 'vg-dp__labels';
+      DAYS.forEach(function (d) {
+        var s = document.createElement('span'); s.textContent = d; labels.appendChild(s);
+      });
+      wrap.appendChild(labels);
+
+      // Grid
+      var grid = document.createElement('div');
+      grid.className = 'vg-dp__grid';
+      var firstDay = new Date(year, month, 1).getDay();
+      var daysInMonth = new Date(year, month + 1, 0).getDate();
+      for (var i = 0; i < firstDay; i++) {
+        var empty = document.createElement('span'); empty.className = 'vg-dp__empty'; grid.appendChild(empty);
+      }
+      for (var d = 1; d <= daysInMonth; d++) {
+        (function(day) {
+          var dt = new Date(year, month, day);
+          var btn = document.createElement('button');
+          btn.type = 'button'; btn.textContent = day;
+          btn.className = 'vg-dp__day';
+          var isPast = dt < new Date(today.getFullYear(), today.getMonth(), today.getDate());
+          var isSun = dt.getDay() === 0;
+          if (isPast || isSun) {
+            btn.disabled = true; btn.className += ' vg-dp__day--disabled';
+          } else {
+            btn.addEventListener('click', function () {
+              wrap.remove();
+              var dayNames = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+              var formatted = dayNames[dt.getDay()] + ' ' + day + ' ' + MONTHS[month];
+              handleInput(formatted);
+            });
+          }
+          grid.appendChild(btn);
+        })(d);
+      }
+      wrap.appendChild(grid);
+    }
+
+    render();
+    body.appendChild(wrap);
     body.scrollTop = body.scrollHeight;
   }
 
