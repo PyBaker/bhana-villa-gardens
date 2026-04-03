@@ -437,6 +437,48 @@
   <i class="fab fa-whatsapp"></i>
 </a>
 
+<!-- ============================================================
+     CHATBOT
+     ============================================================ -->
+<div class="vg-chat" id="vgChat" aria-live="polite">
+  <div class="vg-chat__header">
+    <span class="vg-chat__avatar"><i class="fas fa-leaf"></i></span>
+    <div>
+      <strong>Villa Gardens</strong>
+      <span class="vg-chat__status">Ask us anything</span>
+    </div>
+    <button type="button" class="vg-chat__close" id="vgChatClose" aria-label="Close chat">&#10005;</button>
+  </div>
+  <div class="vg-chat__body" id="vgChatBody">
+    <div class="vg-chat__msg vg-chat__msg--bot">
+      Hi there! 👋 Welcome to Villa Gardens. I can help with location, contact details, venues, rates, and bookings. What would you like to know?
+    </div>
+    <div class="vg-chat__suggestions" id="vgSuggestions">
+      <button type="button">📍 Where are you located?</button>
+      <button type="button">📞 What's your number?</button>
+      <button type="button">💬 WhatsApp?</button>
+      <button type="button">🏛️ What venues do you have?</button>
+      <button type="button">💰 What are your rates?</button>
+      <button type="button">📅 How do I book?</button>
+      <button type="button">📧 Email address?</button>
+      <button type="button">🕐 What are your hours?</button>
+    </div>
+  </div>
+  <div class="vg-chat__footer">
+    <input type="text" id="vgChatInput" class="vg-chat__input" placeholder="Type a message…" autocomplete="off">
+    <button type="button" class="vg-chat__send" id="vgChatSend" aria-label="Send"><i class="fas fa-paper-plane"></i></button>
+  </div>
+  <a href="https://wa.me/263785333222?text=Hi%2C%20I%27d%20like%20to%20enquire%20about%20Villa%20Gardens" target="_blank" rel="noopener" class="vg-chat__wa-btn">
+    <i class="fab fa-whatsapp"></i> Send us a WhatsApp message
+  </a>
+</div>
+
+<button type="button" class="vg-chat__toggle" id="vgChatToggle" aria-label="Open chat">
+  <i class="fas fa-comments"></i>
+  <span class="vg-chat__badge">1</span>
+</button>
+
 <script src="js/main.js"></script>
+<script src="js/chatbot.js"></script>
 </body>
 </html>
