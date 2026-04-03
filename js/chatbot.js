@@ -186,7 +186,7 @@
 
   function slotsMsg(day, slots) {
     setTimeout(function () {
-      addQuickReplies(slots);
+      addQuickReplies(slots.concat(['📅 Pick another date', '↩ Change event type']));
     }, 650);
     return '🗓️ Available slots on <strong>' + cap(day) + '</strong> — tap a time or type your own:';
   }
@@ -195,6 +195,20 @@
 
   function handleBookingStep(input) {
     var lower = input.toLowerCase();
+
+    // -- navigation options --
+    if (lower.indexOf('pick another date') !== -1 || lower.indexOf('another date') !== -1) {
+      booking.step = 'date';
+      setTimeout(function () { addDatePicker(); }, 650);
+      return '📅 No problem — pick a different date:';
+    }
+    if (lower.indexOf('change event') !== -1 || lower.indexOf('↩') !== -1 || lower.indexOf('back') !== -1) {
+      booking = { step: 'event_type' };
+      setTimeout(function () {
+        addQuickReplies(['💍 Wedding', '💼 Conference', '🎊 Private Function', '🎂 Birthday', '🏛️ Venue Tour']);
+      }, 650);
+      return '↩ No worries! What type of event are you planning?';
+    }
 
     // -- step: event type --
     if (booking.step === 'event_type') {
@@ -206,7 +220,10 @@
       }
       booking.eventType = matched || cap(input.trim());
       booking.step = 'date';
-      setTimeout(function () { addDatePicker(); }, 650);
+      setTimeout(function () {
+        addDatePicker();
+        setTimeout(function () { addQuickReplies(['↩ Change event type']); }, 100);
+      }, 650);
       return 'Great choice — <strong>' + booking.eventType + '</strong>! 🎉<br><br>Pick a date:';
     }
 
