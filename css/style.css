@@ -1724,8 +1724,8 @@ h1, h2, h3, h4 {
   bottom: 156px;
   right: 24px;
   z-index: 1000;
-  width: 340px;
-  max-height: 520px;
+  width: 420px;
+  max-height: 640px;
   background: #fff;
   border-radius: 16px;
   box-shadow: 0 8px 40px rgba(0,0,0,0.18);
