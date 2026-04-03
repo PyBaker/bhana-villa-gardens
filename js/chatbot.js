@@ -245,6 +245,9 @@
       var timeMatch = input.match(/\d{1,2}(?::\d{2})?\s*(?:am|pm)?/i);
       booking.time = timeMatch ? timeMatch[0] : input.trim();
       booking.step = 'guests';
+      setTimeout(function () {
+        addQuickReplies(['Under 20', '20–50', '50–100', '100–150', '150–200', '200–300', '300+']);
+      }, 650);
       return 'Perfect — <strong>' + booking.time + '</strong> it is! 👍<br><br>How many guests are you expecting?';
     }
 
@@ -252,18 +255,33 @@
     if (booking.step === 'guests') {
       var numMatch = input.match(/\d+/);
       booking.guests = numMatch ? numMatch[0] : input.trim();
+      booking.step = 'name';
+      return '👤 And your name please?';
+    }
+
+    // -- step: name --
+    if (booking.step === 'name') {
+      booking.name = input.trim();
+      booking.step = 'phone';
+      return 'Thanks ' + booking.name + '! 😊 What\'s the best number to reach you on?';
+    }
+
+    // -- step: phone --
+    if (booking.step === 'phone') {
+      booking.phone = input.trim();
       booking.step = 'confirm';
       var dateDisplay = (booking.dateStr ? booking.dateStr + ' (' + booking.day + ')' : booking.day) || 'TBC';
+      setTimeout(function () {
+        addQuickReplies(['✅ Yes, confirm', '❌ No, cancel', '📞 Call us instead']);
+      }, 650);
       return '✅ Here\'s your booking summary:<br><br>' +
+        '• <strong>Name:</strong> ' + booking.name + '<br>' +
+        '• <strong>Contact:</strong> ' + booking.phone + '<br>' +
         '• <strong>Event:</strong> ' + booking.eventType + '<br>' +
         '• <strong>Date:</strong> ' + dateDisplay + '<br>' +
         '• <strong>Time:</strong> ' + booking.time + '<br>' +
         '• <strong>Guests:</strong> ' + booking.guests + '<br><br>' +
         'Shall I reserve this slot?';
-      setTimeout(function () {
-        addQuickReplies(['✅ Yes, confirm', '❌ No, cancel', '📞 Call us instead']);
-      }, 650);
-      return ret;
     }
 
     // -- step: confirm --
@@ -275,8 +293,8 @@
       if (lower.indexOf('yes') !== -1 || lower.indexOf('confirm') !== -1 || lower.indexOf('sure') !== -1 || lower.indexOf('ok') !== -1) {
         var b = booking;
         booking = null;
-        return '🎉 Wonderful! Your <strong>' + b.eventType + '</strong> on <strong>' + (b.dateStr || b.day) + ' at ' + b.time + '</strong> has been noted.<br><br>' +
-          'Our events team will contact you shortly to confirm all the details. You can also reach us at:<br><br>' +
+        return '🎉 Wonderful, <strong>' + b.name + '</strong>! Your <strong>' + b.eventType + '</strong> on <strong>' + (b.dateStr || b.day) + ' at ' + b.time + '</strong> for <strong>' + b.guests + ' guests</strong> has been noted.<br><br>' +
+          'Our events team will call you on <strong>' + b.phone + '</strong> to confirm all the details. You can also reach us at:<br><br>' +
           '📞 <a href="tel:+263779222111">+263 779 222 111</a><br>' +
           '💬 <a href="https://wa.me/263785333222" target="_blank" rel="noopener">WhatsApp us</a><br>' +
           '📧 <a href="mailto:events@villagardens.co.zw">events@villagardens.co.zw</a>';
