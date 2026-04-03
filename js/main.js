@@ -41,44 +41,16 @@
     a.addEventListener('click', closeMenu);
   });
 
-  // ---- HERO SLIDER ----
-  var slides = document.querySelectorAll('.hero-slide');
-  var dots   = document.querySelectorAll('.hero-dot');
-  var current = 0;
-  var timer;
-
-  function goTo(n) {
-    slides[current].classList.remove('active');
-    dots[current].classList.remove('active');
-    current = (n + slides.length) % slides.length;
-    slides[current].classList.add('active');
-    dots[current].classList.add('active');
-  }
-
-  function next() { goTo(current + 1); }
-  function prev() { goTo(current - 1); }
-
-  function startAuto() {
-    timer = setInterval(next, 5000);
-  }
-  function resetAuto() {
-    clearInterval(timer);
-    startAuto();
-  }
-
-  if (slides.length > 0) {
-    startAuto();
-
-    document.querySelector('.hero-arrow.next').addEventListener('click', function() {
-      next(); resetAuto();
-    });
-    document.querySelector('.hero-arrow.prev').addEventListener('click', function() {
-      prev(); resetAuto();
-    });
-
-    dots.forEach(function(dot, i) {
-      dot.addEventListener('click', function() { goTo(i); resetAuto(); });
-    });
+  // ---- HERO VIDEO ----
+  var video = document.getElementById('hero-video');
+  if (video) {
+    var playPromise = video.play();
+    if (playPromise !== undefined) {
+      playPromise.catch(function() {
+        // Autoplay blocked — show poster, hide video gracefully
+        video.style.display = 'none';
+      });
+    }
   }
 
 })();

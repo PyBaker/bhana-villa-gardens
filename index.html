@@ -57,13 +57,14 @@
 </nav>
 
 <!-- ============================================================
-     HERO SLIDER
+     HERO VIDEO
      ============================================================ -->
 <section class="hero">
-  <div class="hero-slides">
-    <div class="hero-slide hero-slide--1 active"></div>
-    <div class="hero-slide hero-slide--2"></div>
-    <div class="hero-slide hero-slide--3"></div>
+  <div class="hero-video-wrap">
+    <video id="hero-video" playsinline webkit-playsinline autoplay muted loop preload="auto" poster="images/hero-poster.jpg">
+      <source src="bg-vid.mp4" type="video/mp4">
+    </video>
+    <div class="hero-video-overlay"></div>
   </div>
 
   <div class="hero-content">
@@ -74,15 +75,6 @@
       <a href="#venues" class="btn btn-ghost">Explore Venues</a>
       <a href="#contact" class="btn btn-amber">Enquire Now</a>
     </div>
-  </div>
-
-  <button type="button" class="hero-arrow prev" aria-label="Previous slide">&#8592;</button>
-  <button type="button" class="hero-arrow next" aria-label="Next slide">&#8594;</button>
-
-  <div class="hero-dots">
-    <div class="hero-dot active"></div>
-    <div class="hero-dot"></div>
-    <div class="hero-dot"></div>
   </div>
 
   <div class="hero-scroll">
